@@ -1,6 +1,11 @@
+import { useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { Id } from "../../convex/_generated/dataModel";
+import { useState } from "react";
+
 type Props = {
   competitor: {
-    _id: string;
+    _id: Id<"competitors">;
     _creationTime: number;
     background?: string | undefined;
     name: string;
@@ -9,6 +14,8 @@ type Props = {
   };
 };
 const Competitor = ({ competitor }: Props) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const mutate = useMutation(api.competitors.updateCount);
   const backgroundStyle = {
     width: "100%",
     height: "300px",
@@ -16,11 +23,13 @@ const Competitor = ({ competitor }: Props) => {
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
   };
-  const handleVote = () => {
-    alert("Voted");
+  const handleVote = async () => {
+    setLoading(true);
+    await mutate({ id: competitor._id, vote: 2 });
+    setLoading(false);
   };
   return (
-    <div style={backgroundStyle} className="relative h-auto rounded w-52">
+    <div style={backgroundStyle} className="relative h-auto rounded">
       <div className="absolute flex items-center justify-center w-10 h-10 text-center text-white bg-green-400 rounded-full right-1 top-1">
         <h1>{competitor.count}</h1>
       </div>
@@ -29,7 +38,7 @@ const Competitor = ({ competitor }: Props) => {
         className="absolute bottom-0 left-0 right-0 p-2 text-white bg-green-400 rounded-bl rounded-br cursor-pointer"
         aria-label={`Vote for ${competitor.name}`}
       >
-        Vote
+        {loading ? "Voting...." : "Vote"}
       </button>
     </div>
   );
