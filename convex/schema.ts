@@ -3,10 +3,9 @@ import { v } from "convex/values";
 
 export default defineSchema({
   competitors: defineTable({
-    id: v.number(),
     name: v.string(),
-    background: v.string(),
+    background: v.optional(v.string()),
     image: v.string(),
-    count: v.int64(),
-  }).index("byid", ["id"]),
+    count: v.number(),
+  }).index("by_name", ["name"]),
 });
